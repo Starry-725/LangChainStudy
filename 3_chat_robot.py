@@ -1,6 +1,7 @@
 import os
 import uuid
 import gradio as gr
+from dotenv import load_dotenv 
 
 # --- 1. 修复 LangChain 导入 ---
 from langchain_openai import ChatOpenAI
@@ -10,6 +11,10 @@ from langchain_community.chat_message_histories import ChatMessageHistory # <---
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.messages import SystemMessage
 
+
+load_dotenv(override=True)
+
+ARK_API_KEY = os.getenv("ARK_API_KEY")
 # 确保 API 密钥已设置
 if "ARK_API_KEY" not in os.environ:
     raise ValueError("请设置环境变量 ARK_API_KEY")
@@ -118,7 +123,7 @@ with gr.Blocks(
         history[-1]["role"] = "user"
         history.append({"role": "assistant", "content": ""})
 
-        stream = predict(user_message, history, session_id)
+        stream = predict(user_message, session_id)
         for chunk in stream:
             history[-1]["content"] += chunk
             yield history
