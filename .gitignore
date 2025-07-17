@@ -1,4 +1,5 @@
 .env
+.gradio
 
 *.pdf
 *ipynb
