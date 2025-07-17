@@ -60,18 +60,8 @@ conversational_chain = RunnableWithMessageHistory(
 
 # --- Gradio 界面部分 ---
 
-def predict(message, history, session_id: str):
+def predict(message, session_id: str):
     """Gradio 的核心预测函数"""
-    # 将 Gradio 的 history (openai 格式) 添加到后端的 ChatMessageHistory
-    # 这样，即使刷新页面，只要 session_id 不变，历史也还在
-    session_history = get_session_history(session_id)
-    # 这是可选的同步步骤，通常 RunnableWithMessageHistory 已处理，但这样做更稳妥
-    # session_history.clear()
-    # for msg in history:
-    #     if msg.get("role") == "user":
-    #         session_history.add_user_message(msg.get("content"))
-    #     elif msg.get("role") == "assistant":
-    #          session_history.add_ai_message(msg.get("content"))
 
     # 流式调用链
     stream = conversational_chain.stream(
@@ -90,7 +80,7 @@ def predict(message, history, session_id: str):
         else:
             yield chunk
 
-# --- 2. 修复 Gradio 组件初始化和布局 ---
+# --- 2. Gradio 组件初始化和布局 ---
 with gr.Blocks(
     theme=gr.themes.Soft(primary_hue="blue", secondary_hue="sky"),
     css="#chatbot { min-height: 600px; }"
