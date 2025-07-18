@@ -3,8 +3,8 @@ Descripttion: 说明
 version: V1.0
 Author: StarryLei
 Date: 2025-07-17 22:46:27
-LastEditors: StarryLei
-LastEditTime: 2025-07-18 01:32:36
+LastEditors: Starry 1018485883@qq.com
+LastEditTime: 2025-07-18 18:43:37
 '''
 import os
 import requests
@@ -16,6 +16,7 @@ from langchain_core.messages import SystemMessage
 from langchain_core.prompts import ChatPromptTemplate,PromptTemplate
 from langchain_core.output_parsers.openai_tools import JsonOutputKeyToolsParser
 from langchain_core.output_parsers import StrOutputParser
+from langchain_community.tools.tavily_search import TavilySearchResults
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -99,3 +100,6 @@ overall_chain = query_weather_chain | response_chain
 
 print(overall_chain.invoke("请问今天南京的天气怎么样？"))
 
+# 官方提供的工具,用于Tavily检索网页并返回结果
+search = TavilySearchResults(max_result=5)
+print(search.invoke("盘古大模型是造假么"))
