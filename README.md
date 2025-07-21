@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 说明
+ * @version: V1.0
+ * @Author: StarryLei
+ * @Date: 2025-07-17 22:46:27
+ * @LastEditors: StarryLei
+ * @LastEditTime: 2025-07-22 00:05:45
+-->
 # 说明
 ** 这里只是存储一些个人学习Langchain的一些基本代码，方便在不同机器上同步代码内容，不做他用。 **
 
@@ -21,4 +29,11 @@ pip install -r requirements.txt
 1. 用messages_list去传递,将问答历史用append的方式追加到list中
 2. 用RunnableWithMessageHistory创建一个chain,将简单的对话链包装成带记忆的链。调用方法去根据session获得ChatMessageHistory。
 3. 基于gradio界面化的实现了第二种方法。运行命令： python 3_chat_robot.py
+
+# 4_my_tool.py
+1. 编写一个工具，用于查询某个地方的天气
+2. langchain自带的浏览器检索工具TavilySearch的使用
+
+# 5_agent_sql_db2excel.py
+编写了一个自己构建的Agent：将用户输入的自然语言转化为SQL语言，并将查询结果写入Excel文件中。
 
