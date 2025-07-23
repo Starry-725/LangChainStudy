@@ -3,8 +3,8 @@
  * @version: V1.0
  * @Author: StarryLei
  * @Date: 2025-07-17 22:46:27
- * @LastEditors: StarryLei
- * @LastEditTime: 2025-07-22 00:05:45
+ * @LastEditors: Starry 1018485883@qq.com
+ * @LastEditTime: 2025-07-23 17:19:58
 -->
 # 说明
 ** 这里只是存储一些个人学习Langchain的一些基本代码，方便在不同机器上同步代码内容，不做他用。 **
@@ -37,3 +37,9 @@ pip install -r requirements.txt
 # 5_agent_sql_db2excel.py
 编写了一个自己构建的Agent：将用户输入的自然语言转化为SQL语言，并将查询结果写入Excel文件中。
 
+# 6_agent_debate.py
+创建了三个Agent，用户只需要提供一个辩论题目，便可自动产生一场辩论赛。
+1. 裁判Agent：（1）结合辩题生成两个对立观点。（2）根据三个维度为正反方辩手打分。（3）根据辩论全部过程对辩论胜负作出裁决。
+2. 正反方辩手Agent：（1）根据己方的论点以及辩论历史进行网页检索，搜寻己方观点的有力论据。（2）根据对方辩手的论据和自己的检索论据，作出己方观点的论证。
+3. 正反方辩手Agent中含有TavilySearch网页搜索工具，辩手通过这个进行文献和论证搜索。
+4. 需要一个记录工具，用于将整个辩论过程记录为Markdown格式的日志。
