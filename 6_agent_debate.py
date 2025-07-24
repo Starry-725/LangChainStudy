@@ -4,7 +4,7 @@ version: V2.0
 Author: StarryLei & Gemini
 Date: 2025-07-22 00:06:16
 LastEditors: Starry 1018485883@qq.com
-LastEditTime: 2025-07-23 17:00:13
+LastEditTime: 2025-07-24 16:38:35
 '''
 import json
 import time
@@ -104,14 +104,14 @@ debater_agent_prompt_template = """
 referee_llm = ChatOpenAI(
     base_url="https://ark.cn-beijing.volces.com/api/v3",
     api_key=ARK_API_KEY,
-    model="ep-m-20250411184749-5qknb",
+    model="ep-m-20250719172710-9zfxx",
     # streaming=True, # 在Agent模式下，流式输出处理更复杂，暂时关闭以简化
 )
 
 pro_llm = ChatOpenAI(
     base_url="https://ark.cn-beijing.volces.com/api/v3",
     api_key=ARK_API_KEY,
-    model="doubao-seed-1-6-thinking-250715",
+    model="ep-m-20250723164632-ctnnr",
     # streaming=True, # 在Agent模式下，流式输出处理更复杂，暂时关闭以简化
 )
 
