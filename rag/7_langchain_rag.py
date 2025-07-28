@@ -2,7 +2,7 @@
 Author: Starry 1018485883@qq.com
 Date: 2025-07-23 17:51:50
 LastEditors: Starry 1018485883@qq.com
-LastEditTime: 2025-07-24 17:22:06
+LastEditTime: 2025-07-28 16:28:24
 FilePath: /LangChainStudy/rag/7_langchain_rag.py
 Description: 基于langchain和gradio搭建的RAG系统。
 '''
@@ -27,8 +27,11 @@ load_dotenv()
 # 检查OpenAI API Key是否存在
 if not os.getenv("ARK_API_KEY"):
     raise ValueError("请在.env文件中设置ARK_API_KEY")
+if not os.getenv("EMBEDDING_API_KEY"):
+    raise ValueError("请在.env文件中设置EMBEDDING_API_KEY")
 
 ARK_API_KEY = os.getenv("ARK_API_KEY")
+EMBEDDING_API_KEY = os.getenv("EMBEDDING_API_KEY")
 
 # --- 2. 核心RAG逻辑封装成一个函数 ---
 
@@ -47,7 +50,12 @@ def create_rag_chain(file_path: str):
 
     # 步骤3: 创建向量存储 (使用FAISS)
     # 这会使用OpenAI的嵌入模型将文本块转换为向量，并存储在FAISS索引中
-    vectorstore = FAISS.from_documents(documents=splits, embedding=OpenAIEmbeddings())
+    vectorstore = FAISS.from_documents(documents=splits, embedding=OpenAIEmbeddings(
+        base_url="https://api.siliconflow.cn/v1",
+        api_key=EMBEDDING_API_KEY,
+        model="BAAI/bge-m3",
+        chunk_size=64
+    )   )
 
     # 步骤4: 创建LLM和提示模板
     llm = ChatOpenAI(
@@ -86,20 +94,38 @@ def create_rag_chain(file_path: str):
 
 # 定义一个处理文件上传的函数
 # 这个函数只在用户上传新文件时运行一次
+# MODIFIED: 让函数返回三个值以控制三个组件
 def process_file(file):
+    """处理上传的文件，创建RAG链并存入状态。"""
     if file is None:
-        return None, gr.update(value="请先上传一个PDF文件", interactive=False)
-    
+        # 即使没有文件，也要返回三个值来匹配输出绑定
+        return None, gr.update(value="请先上传一个PDF文件", interactive=False), gr.update(interactive=False, placeholder="请先上传文件...")
+
     print(f"正在处理文件: {file.name}")
     
-    # 创建RAG链
     try:
         rag_chain = create_rag_chain(file.name)
-        # 返回创建好的RAG链，并更新聊天输入框状态
-        return rag_chain, gr.update(value="文件处理完成，可以开始提问了。", interactive=True)
+        # 成功时:
+        # 1. RAG链 -> rag_chain_state
+        # 2. 更新状态框文本 -> process_status
+        # 3. 激活问题输入框并更新提示语 -> msg_input
+        return (
+            rag_chain,
+            gr.update(value="文件处理完成，可以开始提问了。", interactive=False), # 状态框的任务已完成，设为不可编辑
+            gr.update(interactive=True, placeholder="现在可以就文档内容提问了...")
+        )
     except Exception as e:
         print(f"处理文件时出错: {e}")
-        return None, gr.update(value=f"处理文件失败: {e}", interactive=False)
+        error_message = f"处理失败: {str(e)}"
+        # 失败时:
+        # 1. None -> rag_chain_state
+        # 2. 更新状态框为错误信息 -> process_status
+        # 3. 保持问题输入框为禁用状态 -> msg_input
+        return (
+            None,
+            gr.update(value=error_message, interactive=False),
+            gr.update(interactive=False, placeholder="文件处理失败，无法提问...")
+        )
 
 # 定义一个处理聊天交互的函数
 # `history`是Gradio的聊天记录，`rag_chain_state`是我们存储RAG链的状态
@@ -150,12 +176,12 @@ with gr.Blocks(theme=gr.themes.Default(primary_hue="blue")) as demo:
 
     # --- 设定组件之间的交互逻辑 ---
 
-    # 当用户上传文件后，触发process_file函数
-    # 函数的输出会更新 rag_chain_state 和 process_status
+    # MODIFIED: 将 msg_input 添加到 outputs 列表
+    # 现在 process_file 返回的三个值会依次更新这三个组件
     upload_button.upload(
         process_file,
         inputs=[upload_button],
-        outputs=[rag_chain_state, process_status]
+        outputs=[rag_chain_state, process_status, msg_input]
     )
 
     # 当用户在输入框提交问题时，触发chat_with_doc函数
