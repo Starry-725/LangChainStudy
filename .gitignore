@@ -3,3 +3,5 @@
 
 *.pdf
 *ipynb
+
+.\mcp-client\.venv
