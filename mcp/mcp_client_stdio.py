@@ -2,8 +2,8 @@
 Author: StarryLei 1018485883@qq.com
 Date: 2025-07-30 23:18:34
 LastEditors: StarryLei 1018485883@qq.com
-LastEditTime: 2025-07-30 23:46:03
-FilePath: \LangChainStudy\mcp-client\client.py
+LastEditTime: 2025-08-07 01:21:31
+FilePath: \LangChainStudy\mcp\client.py
 Description: 
 1.创建MCP客户端
 2.获取工具列表
@@ -21,7 +21,7 @@ class MCPClient:
     """
     一个用于与基于stdio的MCP服务器交互的客户端。
     """
-    def __init__(self, server_script_path="mcp_server.py"):
+    def __init__(self, server_script_path="mcp_server_stdio.py"):
         self.server_script_path = server_script_path
         self.process = None
 
